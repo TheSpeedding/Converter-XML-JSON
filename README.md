@@ -1,2 +1,2 @@
-# Converter XML/JSON
-Application written in Haskell offering conversions between XML and JSON formatted files of unlimited size.
+# XML/JSON Converter
+Application written in Haskell offering conversions between XML and JSON formatted files.
