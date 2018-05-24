@@ -2,6 +2,7 @@ module Parsers where
 
     import PidiParsec
     import Control.Applicative
+    import Data.List.Split
 
     type Attribute = (String, String)
     type Element = (String, [Attribute], Node) -- in json, attributes are empty list

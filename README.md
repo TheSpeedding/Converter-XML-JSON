@@ -12,11 +12,8 @@ It loads XML/JSON formatted file and can produce these outputs. Note that if the
 
 Functions `xmlToJson` and `xmlToXml` have the same semantics, as you may expect.
 
-# CSV parser
-The program can parse CSV files as well. You can use `csvtoXml` and `csvtoJson` functions for this purpose. As you may noticed, there is no equivalent for outputting the CSV files. They only can be parsed and outputted as XML or JSON. You can also see that the functions are transitive. If you use `jsonToXml` applied on the result of `csvToJson`, the result should be the same as the output of `csvToXml` function.
-
-# Code distribution
-The code is logically distributed into three modules.
+# Code division
+The code is logically divided into three modules.
 1. *Parsers* module. This module contains everything necessary for parsing XML, JSON and CSV files.
 2. *Printers* module. This module contains everytthing necessary for pritnting XML and JSON.
 3. *Conversions* module. This module combines previously mentioned modules, contains conversion functions.
@@ -545,13 +542,13 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
          "type": "Capital",
          "country": "Czech Republic",
          "timezone": {
-            "_attributes": {
+            "attributes": {
                "id": "Europe/Prague",
                "utcoffsetMinutes": "120"
             }
          },
          "location": {
-            "_attributes": {
+            "attributes": {
                "altitude": "202",
                "latitude": "50.08804",
                "longitude": "14.42076",
@@ -563,31 +560,31 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
       "credits": "",
       "links": {
          "link": {
-            "_attributes": {
+            "attributes": {
                "id": "xmlSource",
                "url": "http://www.yr.no/place/Czech_Republic/Prague/Prague/forecast.xml"
             }
          },
          "link": {
-            "_attributes": {
+            "attributes": {
                "id": "xmlSourceHourByHour",
                "url": "http://www.yr.no/place/Czech_Republic/Prague/Prague/forecast_hour_by_hour.xml"
             }
          },
          "link": {
-            "_attributes": {
+            "attributes": {
                "id": "overview",
                "url": "http://www.yr.no/place/Czech_Republic/Prague/Prague/"
             }
          },
          "link": {
-            "_attributes": {
+            "attributes": {
                "id": "hourByHour",
                "url": "http://www.yr.no/place/Czech_Republic/Prague/Prague/hour_by_hour"
             }
          },
          "link": {
-            "_attributes": {
+            "attributes": {
                "id": "longTermForecast",
                "url": "http://www.yr.no/place/Czech_Republic/Prague/Prague/long"
             }
@@ -598,7 +595,7 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
          "nextupdate": "2018-05-24T22:00:00"
       },
       "sun": {
-         "_attributes": {
+         "attributes": {
             "rise": "2018-05-24T05:05:16",
             "set": "2018-05-24T20:53:47"
          }
@@ -606,13 +603,13 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
       "forecast": {
          "tabular": {
             "time": {
-               "_attributes": {
+               "attributes": {
                   "from": "2018-05-24T18:00:00",
                   "to": "2018-05-25T00:00:00",
                   "period": "3"
                },
                "symbol": {
-                  "_attributes": {
+                  "attributes": {
                      "number": "4",
                      "numberEx": "4",
                      "name": "Cloudy",
@@ -620,44 +617,44 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
                   }
                },
                "precipitation": {
-                  "_attributes": {
+                  "attributes": {
                      "value": "0"
                   }
                },
                "windDirection": {
-                  "_attributes": {
+                  "attributes": {
                      "deg": "86.1",
                      "code": "E",
                      "name": "East"
                   }
                },
                "windSpeed": {
-                  "_attributes": {
+                  "attributes": {
                      "mps": "5.6",
                      "name": "Moderate breeze"
                   }
                },
                "temperature": {
-                  "_attributes": {
+                  "attributes": {
                      "unit": "celsius",
                      "value": "23"
                   }
                },
                "pressure": {
-                  "_attributes": {
+                  "attributes": {
                      "unit": "hPa",
                      "value": "1018.2"
                   }
                }
             },
             "time": {
-               "_attributes": {
+               "attributes": {
                   "from": "2018-05-25T00:00:00",
                   "to": "2018-05-25T06:00:00",
                   "period": "0"
                },
                "symbol": {
-                  "_attributes": {
+                  "attributes": {
                      "number": "4",
                      "numberEx": "4",
                      "name": "Cloudy",
@@ -665,44 +662,44 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
                   }
                },
                "precipitation": {
-                  "_attributes": {
+                  "attributes": {
                      "value": "0"
                   }
                },
                "windDirection": {
-                  "_attributes": {
+                  "attributes": {
                      "deg": "82.6",
                      "code": "E",
                      "name": "East"
                   }
                },
                "windSpeed": {
-                  "_attributes": {
+                  "attributes": {
                      "mps": "4.0",
                      "name": "Gentle breeze"
                   }
                },
                "temperature": {
-                  "_attributes": {
+                  "attributes": {
                      "unit": "celsius",
                      "value": "18"
                   }
                },
                "pressure": {
-                  "_attributes": {
+                  "attributes": {
                      "unit": "hPa",
                      "value": "1018.9"
                   }
                }
             },
             "time": {
-               "_attributes": {
+               "attributes": {
                   "from": "2018-05-25T06:00:00",
                   "to": "2018-05-25T12:00:00",
                   "period": "1"
                },
                "symbol": {
-                  "_attributes": {
+                  "attributes": {
                      "number": "3",
                      "numberEx": "3",
                      "name": "Partly cloudy",
@@ -710,44 +707,44 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
                   }
                },
                "precipitation": {
-                  "_attributes": {
+                  "attributes": {
                      "value": "0"
                   }
                },
                "windDirection": {
-                  "_attributes": {
+                  "attributes": {
                      "deg": "67.2",
                      "code": "ENE",
                      "name": "East-northeast"
                   }
                },
                "windSpeed": {
-                  "_attributes": {
+                  "attributes": {
                      "mps": "1.9",
                      "name": "Light breeze"
                   }
                },
                "temperature": {
-                  "_attributes": {
+                  "attributes": {
                      "unit": "celsius",
                      "value": "15"
                   }
                },
                "pressure": {
-                  "_attributes": {
+                  "attributes": {
                      "unit": "hPa",
                      "value": "1019.4"
                   }
                }
             },
             "time": {
-               "_attributes": {
+               "attributes": {
                   "from": "2018-05-25T12:00:00",
                   "to": "2018-05-25T18:00:00",
                   "period": "2"
                },
                "symbol": {
-                  "_attributes": {
+                  "attributes": {
                      "number": "4",
                      "numberEx": "4",
                      "name": "Cloudy",
@@ -755,44 +752,44 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
                   }
                },
                "precipitation": {
-                  "_attributes": {
+                  "attributes": {
                      "value": "0"
                   }
                },
                "windDirection": {
-                  "_attributes": {
+                  "attributes": {
                      "deg": "95.7",
                      "code": "E",
                      "name": "East"
                   }
                },
                "windSpeed": {
-                  "_attributes": {
+                  "attributes": {
                      "mps": "4.5",
                      "name": "Gentle breeze"
                   }
                },
                "temperature": {
-                  "_attributes": {
+                  "attributes": {
                      "unit": "celsius",
                      "value": "23"
                   }
                },
                "pressure": {
-                  "_attributes": {
+                  "attributes": {
                      "unit": "hPa",
                      "value": "1018.7"
                   }
                }
             },
             "time": {
-               "_attributes": {
+               "attributes": {
                   "from": "2018-05-25T18:00:00",
                   "to": "2018-05-26T00:00:00",
                   "period": "3"
                },
                "symbol": {
-                  "_attributes": {
+                  "attributes": {
                      "number": "3",
                      "numberEx": "3",
                      "name": "Partly cloudy",
@@ -800,31 +797,31 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
                   }
                },
                "precipitation": {
-                  "_attributes": {
+                  "attributes": {
                      "value": "0"
                   }
                },
                "windDirection": {
-                  "_attributes": {
+                  "attributes": {
                      "deg": "81.0",
                      "code": "E",
                      "name": "East"
                   }
                },
                "windSpeed": {
-                  "_attributes": {
+                  "attributes": {
                      "mps": "4.6",
                      "name": "Gentle breeze"
                   }
                },
                "temperature": {
-                  "_attributes": {
+                  "attributes": {
                      "unit": "celsius",
                      "value": "23"
                   }
                },
                "pressure": {
-                  "_attributes": {
+                  "attributes": {
                      "unit": "hPa",
                      "value": "1017.7"
                   }
@@ -838,4 +835,4 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
 
 This example shows us several things. Although number can be treated as a numeric value in XML, it is always parsed as a string. The same holds for boolean values and null values. That's because XML does not support numeric data type (it can be interpreted as a numeric data type using XML Schema), everything is treated as a string. You can also see that attributes are converted to JSON objects, since JSON does not support attributes. You may notice that applying `xmlToJson` and `jsonToXml` functions in-order leads to different XML, since there's no binding between origin XML attribute - JSON objects are converted to XML elements. You can get symmetric function after two iterations, when you convert JSON with translated attributes into the XML document... Anyway, applying `xmlToXml` function leads to the same XML document. Empty tag was manually added just to demonstrate that the parser can handle empty tags, too.
 
-The only think both parsers cannot handle is parsing comments. You also cannot use mixed elements (text along with sublements), because it would violate JSON concept. The XML document to be parsed must not start with XML prolog, otherwise it would not parse. These minor bugs are intended to be a future work.
+The only think both parsers cannot handle is parsing comments. You also cannot use mixed elements (text along with sublements), because it would violate JSON concept. The XML document to be parsed must not start with XML header, otherwise it would not parse. These minor bugs are intended to be a future work. It's also planned to implement parsing of JSON "attributes" to the real XML attributes.
