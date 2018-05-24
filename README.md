@@ -14,7 +14,7 @@ Functions `xmlToJson` and `xmlToXml` have the same semantics, as you may expect.
 
 # Code division
 The code is logically divided into three modules.
-1. *Parsers* module. This module contains everything necessary for parsing XML, JSON and CSV files.
+1. *Parsers* module. This module contains everything necessary for parsing XML amd JSON CSV files.
 2. *Printers* module. This module contains everytthing necessary for pritnting XML and JSON.
 3. *Conversions* module. This module combines previously mentioned modules, contains conversion functions.
 
