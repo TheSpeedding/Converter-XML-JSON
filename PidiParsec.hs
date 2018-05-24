@@ -1,8 +1,12 @@
 -- Library author: https://github.com/exaexa
+-- Slightly modified: Ignoring whitespaces, parsing booleans, parsing null values.
 
 import Control.Applicative
 import Control.Monad.State.Strict
+
 import Data.Maybe
+import System.IO
+import Data.List.Split
 
 data Parser a = Parser (State String (Maybe a))
 
@@ -48,6 +52,7 @@ pAny = do s <- parseGet
 
 pCharCond f = pAny >>= \c -> if f c then return c
                                     else parseFail
+                                    
 -- parse out a character from a limited range of characters
 pOneOf cs = pCharCond (`elem` cs)
 pAnyExcept cs = pCharCond $ not.(`elem` cs)
@@ -76,9 +81,23 @@ pMany1 :: Parser a -> Parser [a]
 pMany1 p = do x <- p
               xs <- pMany p
               return (x:xs)
+
 -- kleene star
 pMany :: Parser a -> Parser [a]
 pMany p = pMany1 p <|> pure []
+
+
+pWhiteSpace = pMany (pOneOf " \n\t\r")
+
+-- parse out something bracketed from left and right, ignoring whitespaces
+pBracketedIgnore l r p = do pWhiteSpace
+                            l
+                            pWhiteSpace
+                            res <- p
+                            pWhiteSpace
+                            r
+                            pWhiteSpace
+                            return res
 
 -- parse out something bracketed from left and right
 pBracketed l r p = do l
@@ -90,6 +109,10 @@ pDelim l r = pBracketed (pStr l) (pStr r)
 pBrackets = pDelim "[" "]"
 pBraces = pDelim "{" "}"
 
+pDelimIgnore l r = pBracketedIgnore (pStr l) (pStr r)
+pBracketsIgnore = pDelimIgnore "[" "]"
+pBracesIgnore = pDelimIgnore "{" "}"
+
 pQuoted q = pDelim q q . pMany $ pAnyExcept q
 
 -- an useful tool: Just 1 <:> Just [2,3] == Just (1:[2,3]) == Just [1,2,3]
@@ -98,7 +121,7 @@ a <:> b = (:) <$> a <*> b
 
 -- a more useful tool: many1 with separator
 -- pSep (pChar ',') (pStr "asd") parses "asd,asd,asd,..."
-pSep1 s p = p <:> (s >> pSep1 s p)
+pSep1 s p = p <:> (pWhiteSpace >> s >> pWhiteSpace >> pSep1 s p)
             <|>
             (:[]) <$> p
 
@@ -109,89 +132,76 @@ pSep s p = pSep1 s p <|> return []
 
 pCommaDelimited = pSep (pChar ',')
 
-numberOfSpaces = 2
-
-printIndent length = putStr $ replicate (numberOfSpaces * length) ' '
-
 data Json = JsonNumber Int | JsonString String | JsonArray [Json] | JsonBool Bool | JsonNull () | JsonObject [(String, Json)]
 
-printJson :: Json -> IO ()
-printJson x = printJsonImpl x 0 where
-  printJsonImpl (JsonNumber x) indent = do 
-                                         printIndent indent
-                                         putStr $ show x
+instance Show Json where show x = printJson x 3
 
-  printJsonImpl (JsonString x) indent = do 
-                                         printIndent indent
-                                         putStr $ show x
+printJson :: Json -> Int -> String
+printJson x numberOfSpaces = printJsonImpl x 0 where
+  printIndent length = replicate (numberOfSpaces * length) ' '
+
+  printJsonImpl (JsonNumber x) indent = (printIndent indent) ++ (show x)
+
+  printJsonImpl (JsonString x) indent = (printIndent indent) ++ (show x)
 
   printJsonImpl (JsonBool x) indent
-    | True  = do 
-               printIndent indent
-               putStr "true"
-    | False = do
-               printIndent indent
-               putStr "false"
+    | True  = (printIndent indent) ++ "true"
+    | False = (printIndent indent) ++ "false"
 
-  printJsonImpl (JsonNull ()) indent = do
-                                        printIndent indent
-                                        putStr "null"
+  printJsonImpl (JsonNull ()) indent = (printIndent indent) ++ "null"
 
   printJsonImpl (JsonArray x) indent = let
                                         printImpl (x:[]) = printJsonImpl x 0
-                                        printImpl (x:xs) = do
-                                                            printJsonImpl x 0
-                                                            putStr ", "
-                                                            printImpl xs
+                                        printImpl (x:xs) = (printJsonImpl x 0) ++ ", " ++ (printImpl xs)
                                        in
-                                        do
-                                          printIndent indent
-                                          putStr "[ "
-                                          printImpl x
-                                          putStr " ]" 
+                                        (printIndent indent) ++ "[ " ++ (printImpl x) ++ " ]" 
 
   printJsonImpl (JsonObject x) indent = let
                                           printImpl [] indent = printIndent indent
-                                          printImpl ((key, value):[]) indent = do
-                                                                                printIndent indent
-                                                                                putStr $ show key
-                                                                                putStr ":"
-                                                                                printJsonImpl value 0
-                                                                                putStrLn ""
-                                          printImpl ((key, value):xs) indent = do
-                                                                                printIndent indent
-                                                                                putStr $ show key
-                                                                                putStr ":"
-                                                                                printJsonImpl value 0
-                                                                                putStrLn ","
-                                                                                printImpl xs indent
-                                        in 
-                                          do
-                                            printIndent indent
-                                            putStrLn "{"
-                                            printImpl x (indent + 1)
-                                            putStr "}"
 
+                                          -- indentation only for objects                                          
+                                          printImpl ((key, (JsonObject value)):[]) indent = (printIndent indent) ++ (show key) ++ ":" ++ (printJsonImpl (JsonObject value) indent) ++ "\n"
+                                          printImpl ((key, (JsonObject value)):xs) indent = (printIndent indent) ++ (show key) ++ ":" ++ (printJsonImpl (JsonObject value) indent) ++ ",\n" ++ (printImpl xs indent)
+                                        
+                                          printImpl ((key, value):[]) indent = (printIndent indent) ++ (show key) ++ ":" ++ (printJsonImpl value 0) ++ "\n"
+                                          printImpl ((key, value):xs) indent = (printIndent indent) ++ (show key) ++ ":" ++ (printJsonImpl value 0) ++ ",\n" ++ (printImpl xs indent)                                
+                                        in 
+                                          "{\n" ++ (printImpl x (indent + 1)) ++ (printIndent indent) ++ "}"
+
+parseJson :: Parser Json
 parseJson = parseJsonNumber <|> parseJsonString <|> parseJsonArray <|> parseJsonBool <|> parseJsonNull <|> parseJsonObject where
   parseJsonNumber = JsonNumber . (read :: String -> Int) <$> pMany1 (pOneOf ['0'..'9'])
   
   parseJsonString = let 
-                  innerChar = pOneOf (['a'..'z'] ++ ['A'..'Z'] ++ " .,/?!" ++ ['0'..'9'])
-                  innerString = pMany innerChar
-                in
-                  JsonString <$> pDelim "\"" "\"" innerString
+                      innerChar = pOneOf (['a'..'z'] ++ ['A'..'Z'] ++ " .,/?! -:" ++ ['0'..'9'])
+                      innerString = pMany innerChar
+                    in
+                      JsonString <$> pDelim "\"" "\"" innerString
   
-  parseJsonArray = JsonArray <$> pBrackets (pCommaDelimited parseJson)
+  parseJsonArray = JsonArray <$> pBracketsIgnore (pCommaDelimited parseJson)
 
   parseJsonBool = JsonBool <$> pBool
 
   parseJsonNull = JsonNull <$> pNull
 
-  parseJsonObject = JsonObject <$> pBraces (pCommaDelimited objItem) where 
-                objItem = do 
-                            JsonString key <- parseJsonString
-                            pChar ':'
-                            ((,) key) <$> parseJson
-                unusedObjItemApplicativeStyle = (\(JsonString key) val -> (key,val)) <$> parseJsonString <*> (pChar ':' >> parseJson)
+  parseJsonObject = JsonObject <$> pBracesIgnore (pCommaDelimited objItem) where 
+                      objItem = do 
+                                  pWhiteSpace
+                                  JsonString key <- parseJsonString
+                                  pWhiteSpace
+                                  pChar ':'
+                                  pWhiteSpace
+                                  ((,) key) <$> parseJson
+                      unusedObjItemApplicativeStyle = (\(JsonString key) val -> (key,val)) <$> parseJsonString <*> (pChar ':' >> parseJson)
 
-demo = doParseEof parseJson "{\"asd\":\"sracka\",\"list\":[1,2,3],\"q\":{}}"
+jsonToJson :: FilePath -> Int -> IO () -- might be useful when reformatting (indentation)
+jsonToJson inputFile indent = let
+                                extension = head $ tail $ splitOn "." inputFile
+                                fileName = head $ splitOn "." inputFile
+                                newFileName = "new_" ++ inputFile
+                              in
+                                do
+                                  contents <- readFile inputFile
+                                  let parsed = doParseEof parseJson contents
+                                  writeFile newFileName (printJson (fromJust parsed) indent)
+
