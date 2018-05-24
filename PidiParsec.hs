@@ -258,9 +258,3 @@ jsonToXml inputFile indent = let
                                   contents <- readFile inputFile
                                   let parsed = doParseEof parseJson contents
                                   writeFile newFileName (printXml (fromJust parsed) indent)
-                                  
-treeToJson :: String -> Node -> Int -> IO ()
-treeToJson fileName root indent = let
-                                    newFileName = fileName ++ ".json"
-                                  in
-                                    writeFile newFileName (printJson root indent)  
