@@ -139,7 +139,7 @@ pCommaDelimited = pSep (pChar ',')
 
 
 
-data Node = NumericContent Int | TextContent String | NodesArray [Node] | BoolContent Bool | NullValue () | NodeSubelement [(String, Node)]
+data Node = NumericContent Int | TextContent String | NodesArray [Node] | BoolContent Bool | NullValue () | NodeSubelements [(String, Node)]
 
 printJson :: Node -> Int -> String
 printJson x numberOfSpaces = printJsonImpl x 0 where
@@ -157,22 +157,22 @@ printJson x numberOfSpaces = printJsonImpl x 0 where
 
   printJsonImpl (NodesArray x) indent = let    
                                           -- indentation for objects only   
-                                          printImpl ((NodeSubelement x):[]) = printJsonImpl (NodeSubelement x) (indent + 2)
-                                          printImpl ((NodeSubelement x):xs) = (printJsonImpl (NodeSubelement x) (indent + 2)) ++ ", " ++ (printImpl xs)
+                                          printImpl ((NodeSubelements x):[]) = printJsonImpl (NodeSubelements x) (indent + 2)
+                                          printImpl ((NodeSubelements x):xs) = (printJsonImpl (NodeSubelements x) (indent + 2)) ++ ", " ++ (printImpl xs)
                                           
                                           printImpl (x:[]) = printJsonImpl x 0
                                           printImpl (x:xs) = (printJsonImpl x 0) ++ ", " ++ (printImpl xs)
                                         in
                                           (printIndent indent) ++ "[ " ++ (printImpl x) ++ " ]" 
 
-  printJsonImpl (NodeSubelement []) indent = "{}"
+  printJsonImpl (NodeSubelements []) indent = "{}"
 
-  printJsonImpl (NodeSubelement x) indent = let
+  printJsonImpl (NodeSubelements x) indent = let
                                               printImpl [] indent = printIndent indent
 
                                               -- indentation for objects only                                        
-                                              printImpl ((key, (NodeSubelement value)):[]) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl (NodeSubelement value) indent) ++ "\n"
-                                              printImpl ((key, (NodeSubelement value)):xs) indent = (printIndent indent) ++ (show key) ++ ":" ++ (printJsonImpl (NodeSubelement value) indent) ++ ",\n" ++ (printImpl xs indent)
+                                              printImpl ((key, (NodeSubelements value)):[]) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl (NodeSubelements value) indent) ++ "\n"
+                                              printImpl ((key, (NodeSubelements value)):xs) indent = (printIndent indent) ++ (show key) ++ ":" ++ (printJsonImpl (NodeSubelements value) indent) ++ ",\n" ++ (printImpl xs indent)
                                             
                                               printImpl ((key, value):[]) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl value 0) ++ "\n"
                                               printImpl ((key, value):xs) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl value 0) ++ ",\n" ++ (printImpl xs indent)                                
@@ -200,9 +200,9 @@ printXml x numberOfSpaces = printXmlImpl x 0 where
                                       in
                                         printImpl x
 
-  printXmlImpl (NodeSubelement []) indent = ""
+  printXmlImpl (NodeSubelements []) indent = ""
                                     
-  printXmlImpl (NodeSubelement x) indent = let
+  printXmlImpl (NodeSubelements x) indent = let
                                             printImpl [] indent = printIndent indent
                                         
                                             printImpl ((key, value):[]) indent = (printIndent indent) ++ "<" ++ key ++ ">\n" ++ (printXmlImpl value (indent + 1)) ++ "\n" ++ (printIndent indent) ++ "</" ++ key ++ ">"
@@ -229,7 +229,7 @@ parseJson = parseJsonNumber <|> parseJsonString <|> parseJsonArray <|> parseJson
 
   parseJsonNull = NullValue <$> pNull
 
-  parseJsonObject = NodeSubelement <$> pBracesIgnore (pCommaDelimited objItem) where 
+  parseJsonObject = NodeSubelements <$> pBracesIgnore (pCommaDelimited objItem) where 
                       objItem = do 
                                   pWhiteSpace
                                   TextContent key <- parseJsonString
@@ -237,9 +237,34 @@ parseJson = parseJsonNumber <|> parseJsonString <|> parseJsonArray <|> parseJson
                                   pChar ':'
                                   pWhiteSpace
                                   ((,) key) <$> parseJson
-                      unusedObjItemApplicativeStyle = (\(TextContent key) val -> (key,val)) <$> parseJsonString <*> (pChar ':' >> parseJson)
 
 
+parseXml :: Parser Node
+parseXml = parseXmlInnerContent <|> parseXmlElement where
+  parseXmlInnerContent = let 
+                            innerChar = pOneOf " !#$%&'()*+,-./0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+                            innerString = pMany innerChar
+                         in
+                            TextContent <$> innerString
+  parseXmlStartTag = do
+                        pChar '<'
+                        tag <- pMany1 (pOneOf (['a'..'z'] ++ ['A'..'Z']))
+                        -- pWhiteSpace
+                        -- attributes
+                        pChar '>'
+                        return tag
+  parseXmlElement = NodeSubelements <$> elItem where
+                      elItem = do
+                                  pWhiteSpace
+                                  tag <- parseXmlStartTag
+                                  pWhiteSpace
+                                  res <- parseXml
+                                  pWhiteSpace
+                                  pStr $ "</" ++ tag ++ ">"
+                                  return $ ((,) tag) <$> res
+                      
+                                
+                                  
 jsonToJson :: FilePath -> Int -> IO () -- might be useful when reformatting (indentation, unreadable json to readable one)
 jsonToJson inputFile indent = let
                                 extension = head $ tail $ splitOn "." inputFile

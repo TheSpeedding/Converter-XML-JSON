@@ -7,8 +7,8 @@ It can parse both XML and JSON files. For this purpose, it uses PidiParsec libra
 There are 2 conversion functions for XML and 2 conversion functions for JSON.
 It loads XML/JSON formatted file and can produce these outputs. Note that if the parsing fails, an exception is thrown.
 
-1. `jsonToJson :: FilePath -> Int -> IO ()` converts JSON file to JSON file. This may be useful to do some reformatting, indentation. The first argument is path to the file, the second argument is number of spaces in indentation. The output is written to the file specified in the first argument, prefixed with "new_".
-2. `jsonToXml :: FilePath -> Int -> IO ()` converts JSON file to XML file. Arguments are the same, the only difference is that the output file has the same name as the input one, but the extension is changed to "*.xml".
+1. `jsonToJson :: FilePath -> Int -> IO ()` converts JSON file to JSON file. This may be useful to do some reformatting, indentation. The first argument is path to the file, the second argument is number of spaces in indentation. The output is written to the file specified in the first argument, prefixed with `new_`.
+2. `jsonToXml :: FilePath -> Int -> IO ()` converts JSON file to XML file. Arguments are the same, the only difference is that the output file has the same name as the input one, but the extension is changed to `*.xml`.
 
 Functions `xmlToJson` and `xmlToXml` have the same semantics, as you may expect.
 
@@ -22,14 +22,14 @@ The code is logically distributed into three modules.
 3. *Conversions* module. This module combines previously mentioned modules, contains conversion functions.
 
 # Examples 
-### JSON to JSON and XML example
- Suppose following, very poorly formatted and without any indentation, JSON document, saved as "data.json" file. It was downloaded from [Transit Feed API](https://api.transitfeeds.com/v1), shortened a little bit and it represents "all" the locations that are transit feeds available for. 
+### JSON to JSON with indentation && JSON to XML example
+ Suppose following, very poorly formatted and without any indentation, JSON document, saved as `data.json` file. It was downloaded from [Transit Feed API](https://api.transitfeeds.com/v1), shortened a little bit and it represents "all" the locations that are transit feeds available for. 
 
 ```
  {"status":"OK","ts":1527170641,"results":{"locations":[{"id":606,"pid":168,"t":"Aachen, Germany","n":"Aachen","lat":"50.775346","lng":"6.083887"},{"id":416,"pid":415,"t":"Addison County, VT, USA","n":"Addison County","lat":"44.119729","lng":"-73.164338"},{"id":4,"pid":3,"t":"Adelaide SA, Australia","n":"Adelaide","lat":"-34.928621","lng":"138.599959"},{"id":99,"pid":0,"t":"Africa","n":"Africa","lat":"-8.783195","lng":"34.508523"},{"id":11,"pid":9,"t":"Airlie Beach QLD 4802, Australia","n":"Airlie Beach","lat":"-20.26872","lng":"148.718456"},{"id":237,"pid":31,"t":"Alabama, USA","n":"Alabama","lat":"32.318231","lng":"-86.902298"},{"id":276,"pid":31,"t":"Alaska, USA","n":"Alaska","lat":"64.200841","lng":"-149.493673"},{"id":85,"pid":84,"t":"Albany, NY, USA","n":"Albany","lat":"42.652579","lng":"-73.756232"},{"id":328,"pid":63,"t":"Albany, OR, USA","n":"Albany","lat":"44.636511","lng":"-123.105928"},{"id":42,"pid":32,"t":"Alberta, Canada","n":"Alberta","lat":"53.933271","lng":"-116.576504"},{"id":81,"pid":80,"t":"Albuquerque, NM, USA","n":"Albuquerque","lat":"35.110703","lng":"-106.609991"},{"id":324,"pid":138,"t":"Alexandria, VA, USA","n":"Alexandria","lat":"38.804836","lng":"-77.046921"},{"id":375,"pid":373,"t":"Alice Springs NT 0870, Australia","n":"Alice Springs","lat":"-23.70021","lng":"133.880611"},{"id":134,"pid":133,"t":"Allegany, MD, USA","n":"Allegany","lat":"39.625525","lng":"-78.6115"},{"id":459,"pid":105,"t":"Allentown, PA, USA","n":"Allentown","lat":"40.60843","lng":"-75.490183"}]}}
  ```
 
- Using `jsonToJson "data.json" 3`, it can be converted to "new_data.json" file where one tab holds for three spaces. The output is following.                    
+ Using `jsonToJson "data.json" 3`, it can be converted to `new_data.json` file where one tab holds for three spaces. The output is following.                    
 
 ```
 {
@@ -461,4 +461,144 @@ As you can see, it's nicely indented. You can get XML result as well, using `jso
 </results>
 ```
 
-In this case, the XML contains no root element. Meaning that the XML is not well-formed. There is nothing to do with this, since JSON document contains no root element as well. In this case, the result was saved in "data.xml" file.
+In this case, the XML contains no root element. Meaning that the XML is not well-formed. There is nothing to do with this, since well-formed JSON document can contain no root element as well. In this case, the result was saved in `data.xml` file.
+
+### XML to JSON example
+As an example, we can use (shortened) weather forecast data for Prague, downloaded freely from [Yr.no](https://yr.no/).
+
+```
+<weatherdata>
+<location>
+<name>Prague</name>
+<type>Capital</type>
+<country>Czech Republic</country>
+<timezone id="Europe/Prague" utcoffsetMinutes="120"/>
+<location altitude="202" latitude="50.08804" longitude="14.42076" geobase="geonames" geobaseid="3067696"/>
+</location>
+<credit>
+<!--
+In order to use the free weather data from yr no, you HAVE to display 
+the following text clearly visible on your web page. The text should be a 
+link to the specified URL.
+-->
+<!--
+Please read more about our conditions and guidelines at http://om.yr.no/verdata/  English explanation at http://om.yr.no/verdata/free-weather-data/
+-->
+<link text="Weather forecast from Yr, delivered by the Norwegian Meteorological Institute and the NRK" url="http://www.yr.no/place/Czech_Republic/Prague/Prague/"/>
+</credit>
+<links>
+<link id="xmlSource" url="http://www.yr.no/place/Czech_Republic/Prague/Prague/forecast.xml"/>
+<link id="xmlSourceHourByHour" url="http://www.yr.no/place/Czech_Republic/Prague/Prague/forecast_hour_by_hour.xml"/>
+<link id="overview" url="http://www.yr.no/place/Czech_Republic/Prague/Prague/"/>
+<link id="hourByHour" url="http://www.yr.no/place/Czech_Republic/Prague/Prague/hour_by_hour"/>
+<link id="longTermForecast" url="http://www.yr.no/place/Czech_Republic/Prague/Prague/long"/>
+</links>
+<meta>
+<lastupdate>2018-05-24T09:36:00</lastupdate>
+<nextupdate>2018-05-24T22:00:00</nextupdate>
+</meta>
+<sun rise="2018-05-24T05:05:16" set="2018-05-24T20:53:47"/>
+<forecast>
+<tabular>
+<time from="2018-05-24T18:00:00" to="2018-05-25T00:00:00" period="3">
+<!--
+ Valid from 2018-05-24T18:00:00 to 2018-05-25T00:00:00 
+-->
+<symbol number="4" numberEx="4" name="Cloudy" var="04"/>
+<precipitation value="0"/>
+<!--  Valid at 2018-05-24T18:00:00  -->
+<windDirection deg="86.1" code="E" name="East"/>
+<windSpeed mps="5.6" name="Moderate breeze"/>
+<temperature unit="celsius" value="23"/>
+<pressure unit="hPa" value="1018.2"/>
+</time>
+<time from="2018-05-25T00:00:00" to="2018-05-25T06:00:00" period="0">
+<!--
+ Valid from 2018-05-25T00:00:00 to 2018-05-25T06:00:00 
+-->
+<symbol number="4" numberEx="4" name="Cloudy" var="04"/>
+<precipitation value="0"/>
+<!--  Valid at 2018-05-25T00:00:00  -->
+<windDirection deg="82.6" code="E" name="East"/>
+<windSpeed mps="4.0" name="Gentle breeze"/>
+<temperature unit="celsius" value="18"/>
+<pressure unit="hPa" value="1018.9"/>
+</time>
+<time from="2018-05-25T06:00:00" to="2018-05-25T12:00:00" period="1">
+<!--
+ Valid from 2018-05-25T06:00:00 to 2018-05-25T12:00:00 
+-->
+<symbol number="3" numberEx="3" name="Partly cloudy" var="03d"/>
+<precipitation value="0"/>
+<!--  Valid at 2018-05-25T06:00:00  -->
+<windDirection deg="67.2" code="ENE" name="East-northeast"/>
+<windSpeed mps="1.9" name="Light breeze"/>
+<temperature unit="celsius" value="15"/>
+<pressure unit="hPa" value="1019.4"/>
+</time>
+<time from="2018-05-25T12:00:00" to="2018-05-25T18:00:00" period="2">
+<!--
+ Valid from 2018-05-25T12:00:00 to 2018-05-25T18:00:00 
+-->
+<symbol number="4" numberEx="4" name="Cloudy" var="04"/>
+<precipitation value="0"/>
+<!--  Valid at 2018-05-25T12:00:00  -->
+<windDirection deg="95.7" code="E" name="East"/>
+<windSpeed mps="4.5" name="Gentle breeze"/>
+<temperature unit="celsius" value="23"/>
+<pressure unit="hPa" value="1018.7"/>
+</time>
+<time from="2018-05-25T18:00:00" to="2018-05-26T00:00:00" period="3">
+<!--
+ Valid from 2018-05-25T18:00:00 to 2018-05-26T00:00:00 
+-->
+<symbol number="3" numberEx="3" name="Partly cloudy" var="03n"/>
+<precipitation value="0"/>
+<!--  Valid at 2018-05-25T18:00:00  -->
+<windDirection deg="81.0" code="E" name="East"/>
+<windSpeed mps="4.6" name="Gentle breeze"/>
+<temperature unit="celsius" value="23"/>
+<pressure unit="hPa" value="1017.7"/>
+</time>
+<time from="2018-05-26T00:00:00" to="2018-05-26T06:00:00" period="0">
+<!--
+ Valid from 2018-05-26T00:00:00 to 2018-05-26T06:00:00 
+-->
+<symbol number="1" numberEx="1" name="Clear sky" var="01n"/>
+<precipitation value="0"/>
+<!--  Valid at 2018-05-26T00:00:00  -->
+<windDirection deg="99.0" code="E" name="East"/>
+<windSpeed mps="2.0" name="Light breeze"/>
+<temperature unit="celsius" value="16"/>
+<pressure unit="hPa" value="1020.2"/>
+</time>
+<time from="2018-05-26T06:00:00" to="2018-05-26T12:00:00" period="1">
+<!--
+ Valid from 2018-05-26T06:00:00 to 2018-05-26T12:00:00 
+-->
+<symbol number="1" numberEx="1" name="Clear sky" var="01d"/>
+<precipitation value="0"/>
+<!--  Valid at 2018-05-26T06:00:00  -->
+<windDirection deg="18.3" code="NNE" name="North-northeast"/>
+<windSpeed mps="1.5" name="Light air"/>
+<temperature unit="celsius" value="13"/>
+<pressure unit="hPa" value="1020.7"/>
+</time>
+<time from="2018-05-26T12:00:00" to="2018-05-26T18:00:00" period="2">
+<!--
+ Valid from 2018-05-26T12:00:00 to 2018-05-26T18:00:00 
+-->
+<symbol number="2" numberEx="2" name="Fair" var="02d"/>
+<precipitation value="0"/>
+<!--  Valid at 2018-05-26T12:00:00  -->
+<windDirection deg="80.1" code="E" name="East"/>
+<windSpeed mps="1.7" name="Light breeze"/>
+<temperature unit="celsius" value="23"/>
+<pressure unit="hPa" value="1020.9"/>
+</time>
+</tabular>
+</forecast>
+</weatherdata>
+```
+
+This example shows us several things. Although number can be treated as a numeric value in XML, it is always parsed as a string. The same holds for boolean values and null values. That's because XML does not support numeric data type (it can be interpreted as a numeric data type using XML Schema), everything is treated as a string. You can also see that attributes are converted to JSON objects, since JSON does not support attributes. You may notice that applying `xmlToJson` and `jsonToXml` functions in-order leads to different XML, since there's no binding between origin XML attribute - JSON objects are converted to XML elements. Applying `xmlToXml` function leads to the same XML document.
