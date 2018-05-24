@@ -7,8 +7,8 @@ It can parse both XML and JSON files. For this purpose, it uses PidiParsec libra
 There are 2 conversion functions for XML and 2 conversion functions for JSON.
 It loads XML/JSON formatted file and can produce these outputs. Note that if the parsing fails, an exception is thrown.
 
-1. `jsonToJson :: FilePath -> Int -> IO ()`</li> converts JSON file to JSON file. This may be useful to do some reformatting, indentation. The first argument is path to the file, the second argument is number of spaces in indentation. The output is written to the file specified in the first argument, prefixes with "new_".
-2. `jsonToXml :: FilePath -> Int -> IO ()`</li> converts JSON file to XML file. Arguments are the same, the only difference that the output file has the same name as the input one, but the extension is changed to "*.xml"
+1. `jsonToJson :: FilePath -> Int -> IO ()` converts JSON file to JSON file. This may be useful to do some reformatting, indentation. The first argument is path to the file, the second argument is number of spaces in indentation. The output is written to the file specified in the first argument, prefixed with "new_".
+2. `jsonToXml :: FilePath -> Int -> IO ()` converts JSON file to XML file. Arguments are the same, the only difference is that the output file has the same name as the input one, but the extension is changed to "*.xml"
 
 Functions `xmlToJson` and `xmlToXml` have the same semantics, as you may expect.
 
