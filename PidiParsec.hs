@@ -132,6 +132,7 @@ pSep s p = pSep1 s p <|> return []
 
 pCommaDelimited = pSep (pChar ',')
 
+pWSDelimited = pSep pWhiteSpace
 
 
 
@@ -139,7 +140,12 @@ pCommaDelimited = pSep (pChar ',')
 
 
 
-data Node = NumericContent Int | TextContent String | NodesArray [Node] | BoolContent Bool | NullValue () | NodeSubelements [(String, Node)]
+
+
+type Attribute = (String, String)
+type Element = (String, [Attribute], Node) -- in json, attributes are empty list
+
+data Node = NumericContent Int | TextContent String | NodesArray [Node] | BoolContent Bool | NullValue () | NodeSubelements [Element] | Empty deriving Show
 
 printJson :: Node -> Int -> String
 printJson x numberOfSpaces = printJsonImpl x 0 where
@@ -168,14 +174,34 @@ printJson x numberOfSpaces = printJsonImpl x 0 where
   printJsonImpl (NodeSubelements []) indent = "{}"
 
   printJsonImpl (NodeSubelements x) indent = let
+                                              -- treat attribute as an object, convert key as a key for object and value as a text content of the object
+                                              getAttrs [] [] = undefined -- should not be reached (debug cases)
+                                              getAttrs [] objectContent = ("_attributes", [], NodeSubelements objectContent)
+                                              getAttrs ((key, val):xs) objectContent = getAttrs xs (objectContent ++ [(key, [], (TextContent val))])
+
+                                              printAttrs attributes = (printJsonImpl (NodeSubelements [(getAttrs attributes [])]) (indent + 1))
+
                                               printImpl [] indent = printIndent indent
 
+                                              -- no data for empty instances, no attributes                                     
+                                              printImpl ((key, [], Empty):[]) indent = (printIndent indent) ++ (show key) ++ ": \"\"" ++ "\n"
+                                              printImpl ((key, [], Empty):xs) indent = (printIndent indent) ++ (show key) ++ ": \"\"" ++ ",\n" ++ (printImpl xs indent)                                            
+
+                                              -- indentation for objects only, no attributes                                        
+                                              printImpl ((key, [], (NodeSubelements value)):[]) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl (NodeSubelements (value)) indent) ++ "\n"
+                                              printImpl ((key, [], (NodeSubelements value)):xs) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl (NodeSubelements (value)) indent) ++ ",\n" ++ (printImpl xs indent)
+
+                                              -- no data for empty instances                                     
+                                              printImpl ((key, attributes, Empty):[]) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printAttrs attributes) ++ "\n"
+                                              printImpl ((key, attributes, Empty):xs) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printAttrs attributes) ++ ",\n" ++ (printImpl xs indent)                                            
+
                                               -- indentation for objects only                                        
-                                              printImpl ((key, (NodeSubelements value)):[]) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl (NodeSubelements value) indent) ++ "\n"
-                                              printImpl ((key, (NodeSubelements value)):xs) indent = (printIndent indent) ++ (show key) ++ ":" ++ (printJsonImpl (NodeSubelements value) indent) ++ ",\n" ++ (printImpl xs indent)
-                                            
-                                              printImpl ((key, value):[]) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl value 0) ++ "\n"
-                                              printImpl ((key, value):xs) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl value 0) ++ ",\n" ++ (printImpl xs indent)                                
+                                              printImpl ((key, attributes, (NodeSubelements value)):[]) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl (NodeSubelements ([(getAttrs attributes [])] ++ value)) indent) ++ "\n"
+                                              printImpl ((key, attributes, (NodeSubelements value)):xs) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl (NodeSubelements ([(getAttrs attributes [])] ++ value)) indent) ++ ",\n" ++ (printImpl xs indent)
+                                                                                      
+                                              -- simple value types cannot have attributes
+                                              printImpl ((key, [], value):[]) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl value 0) ++ "\n"
+                                              printImpl ((key, [], value):xs) indent = (printIndent indent) ++ (show key) ++ ": " ++ (printJsonImpl value 0) ++ ",\n" ++ (printImpl xs indent)                                
                                             in 
                                               "{\n" ++ (printImpl x (indent + 1)) ++ (printIndent indent) ++ "}"
 
@@ -203,15 +229,22 @@ printXml x numberOfSpaces = printXmlImpl x 0 where
   printXmlImpl (NodeSubelements []) indent = ""
                                     
   printXmlImpl (NodeSubelements x) indent = let
-                                            printImpl [] indent = printIndent indent
-                                        
-                                            printImpl ((key, value):[]) indent = (printIndent indent) ++ "<" ++ key ++ ">\n" ++ (printXmlImpl value (indent + 1)) ++ "\n" ++ (printIndent indent) ++ "</" ++ key ++ ">"
-                                            printImpl ((key, value):xs) indent = (printIndent indent) ++ "<" ++ key ++ ">\n" ++ (printXmlImpl value (indent + 1)) ++ "\n" ++ (printIndent indent) ++ "</" ++ key ++ ">\n" ++ (printImpl xs indent)                           
+                                            printAttrs [] = ""
+                                            printAttrs ((key, val):[]) = " " ++ key ++ "=\"" ++ val ++ "\""
+                                            printAttrs ((key, val):xs) = " " ++ key ++ "=\"" ++ val ++ "\"" ++ printAttrs xs
+
+                                            printImpl [] indent = printIndent indent 
+
+                                            -- print empty elements                                       
+                                            printImpl ((key, attributes, Empty):[]) indent = (printIndent indent) ++ "<" ++ key ++ (printAttrs attributes) ++ "/>"
+                                            printImpl ((key, attributes, Empty):xs) indent = (printIndent indent) ++ "<" ++ key ++ (printAttrs attributes) ++ "/>\n" ++ (printImpl xs indent)                           
+                                          
+                                            -- print non-empty elements                                       
+                                            printImpl ((key, attributes, value):[]) indent = (printIndent indent) ++ "<" ++ key ++ (printAttrs attributes) ++ ">\n" ++ (printXmlImpl value (indent + 1)) ++ "\n" ++ (printIndent indent) ++ "</" ++ key ++ ">"
+                                            printImpl ((key, attributes, value):xs) indent = (printIndent indent) ++ "<" ++ key ++ (printAttrs attributes) ++ ">\n" ++ (printXmlImpl value (indent + 1)) ++ "\n" ++ (printIndent indent) ++ "</" ++ key ++ ">\n" ++ (printImpl xs indent)                           
                                           in 
                                             printImpl x indent
 
-
-                                      
 
 parseJson :: Parser Node
 parseJson = parseJsonNumber <|> parseJsonString <|> parseJsonArray <|> parseJsonBool <|> parseJsonNull <|> parseJsonObject where
@@ -236,35 +269,47 @@ parseJson = parseJsonNumber <|> parseJsonString <|> parseJsonArray <|> parseJson
                                   pWhiteSpace
                                   pChar ':'
                                   pWhiteSpace
-                                  ((,) key) <$> parseJson
+                                  ((,,) key []) <$> parseJson
 
 
 parseXml :: Parser Node
-parseXml = parseXmlInnerContent <|> parseXmlElement where
+parseXml = parseXmlElement <|> parseXmlInnerContent where
   parseXmlInnerContent = let 
-                            innerChar = pOneOf " !#$%&'()*+,-./0123456789:;=?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
+                            innerChar = pOneOf " !#$%&'()*+,-_./0123456789:;?@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
                             innerString = pMany innerChar
                          in
                             TextContent <$> innerString
-  parseXmlStartTag = do
-                        pChar '<'
-                        tag <- pMany1 (pOneOf (['a'..'z'] ++ ['A'..'Z']))
-                        -- pWhiteSpace
-                        -- attributes
-                        pChar '>'
-                        return tag
-  parseXmlElement = NodeSubelements <$> elItem where
-                      elItem = do
-                                  pWhiteSpace
-                                  tag <- parseXmlStartTag
-                                  pWhiteSpace
-                                  res <- parseXml
-                                  pWhiteSpace
-                                  pStr $ "</" ++ tag ++ ">"
-                                  return $ ((,) tag) <$> res
+
+  parseXmlAttrOrElName = pMany1 $ pOneOf (['0'..'9'] ++ ['a'..'z'] ++ ['A'..'Z'])
+
+  parseXmlAttribute = do
+                        pWhiteSpace
+                        key <- parseXmlAttrOrElName
+                        pWhiteSpace
+                        pStr "=\""
+                        pWhiteSpace
+                        TextContent val <- parseXmlInnerContent
+                        pChar '\"'
+                        return (key, val)
+
+  parseXmlElement = NodeSubelements <$> (pMany1 element) where 
+                    element = do
+                                pWhiteSpace
+                                pChar '<'
+                                name <- parseXmlAttrOrElName
+                                attr <- pMany parseXmlAttribute
+                                close <- (pStr "/>" <|> pStr ">")
+                                pWhiteSpace
+                                if (length close) == 2 then return (name, attr, Empty) -- empty element
+                                else do 
+                                        body <- parseXml -- content of the element
+                                        pStr "</"
+                                        pStr name
+                                        pStr ">"
+                                        pWhiteSpace
+                                        return (name, attr, body)
                       
-                                
-                                  
+                                                              
 jsonToJson :: FilePath -> Int -> IO () -- might be useful when reformatting (indentation, unreadable json to readable one)
 jsonToJson inputFile indent = let
                                 extension = head $ tail $ splitOn "." inputFile
@@ -287,3 +332,27 @@ jsonToXml inputFile indent = let
                                   contents <- readFile inputFile
                                   let parsed = doParseEof parseJson contents
                                   writeFile newFileName (printXml (fromJust parsed) indent)
+
+
+xmlToXml :: FilePath -> Int -> IO () -- might be useful when reformatting (indentation, unreadable xml to readable one)
+xmlToXml inputFile indent = let
+                                extension = head $ tail $ splitOn "." inputFile
+                                fileName = head $ splitOn "." inputFile
+                                newFileName = "new_" ++ fileName ++ ".xml"
+                              in
+                                do
+                                  contents <- readFile inputFile
+                                  let parsed = doParseEof parseXml contents
+                                  writeFile newFileName (printXml (fromJust parsed) indent)
+
+
+xmlToJson :: FilePath -> Int -> IO ()
+xmlToJson inputFile indent = let
+                                extension = head $ tail $ splitOn "." inputFile
+                                fileName = head $ splitOn "." inputFile
+                                newFileName = fileName ++ ".json"
+                              in
+                                do
+                                  contents <- readFile inputFile
+                                  let parsed = doParseEof parseXml contents
+                                  writeFile newFileName (printJson (fromJust parsed) indent)

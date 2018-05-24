@@ -464,7 +464,7 @@ As you can see, it's nicely indented. You can get XML result as well, using `jso
 In this case, the XML contains no root element. Meaning that the XML is not well-formed. There is nothing to do with this, since well-formed JSON document can contain no root element as well. In this case, the result was saved in `data.xml` file.
 
 ### XML to JSON example
-As an example, we can use (shortened) weather forecast data for Prague, downloaded freely from [Yr.no](https://yr.no/).
+As an example, we can use (shortened) weather forecast data for Prague, downloaded freely from [yr.no](https://yr.no/) portal.
 
 ```
 <weatherdata>
@@ -475,17 +475,7 @@ As an example, we can use (shortened) weather forecast data for Prague, download
 <timezone id="Europe/Prague" utcoffsetMinutes="120"/>
 <location altitude="202" latitude="50.08804" longitude="14.42076" geobase="geonames" geobaseid="3067696"/>
 </location>
-<credit>
-<!--
-In order to use the free weather data from yr no, you HAVE to display 
-the following text clearly visible on your web page. The text should be a 
-link to the specified URL.
--->
-<!--
-Please read more about our conditions and guidelines at http://om.yr.no/verdata/  English explanation at http://om.yr.no/verdata/free-weather-data/
--->
-<link text="Weather forecast from Yr, delivered by the Norwegian Meteorological Institute and the NRK" url="http://www.yr.no/place/Czech_Republic/Prague/Prague/"/>
-</credit>
+<credits/>
 <links>
 <link id="xmlSource" url="http://www.yr.no/place/Czech_Republic/Prague/Prague/forecast.xml"/>
 <link id="xmlSourceHourByHour" url="http://www.yr.no/place/Czech_Republic/Prague/Prague/forecast_hour_by_hour.xml"/>
@@ -501,104 +491,351 @@ Please read more about our conditions and guidelines at http://om.yr.no/verdata/
 <forecast>
 <tabular>
 <time from="2018-05-24T18:00:00" to="2018-05-25T00:00:00" period="3">
-<!--
- Valid from 2018-05-24T18:00:00 to 2018-05-25T00:00:00 
--->
 <symbol number="4" numberEx="4" name="Cloudy" var="04"/>
 <precipitation value="0"/>
-<!--  Valid at 2018-05-24T18:00:00  -->
 <windDirection deg="86.1" code="E" name="East"/>
 <windSpeed mps="5.6" name="Moderate breeze"/>
 <temperature unit="celsius" value="23"/>
 <pressure unit="hPa" value="1018.2"/>
 </time>
 <time from="2018-05-25T00:00:00" to="2018-05-25T06:00:00" period="0">
-<!--
- Valid from 2018-05-25T00:00:00 to 2018-05-25T06:00:00 
--->
 <symbol number="4" numberEx="4" name="Cloudy" var="04"/>
 <precipitation value="0"/>
-<!--  Valid at 2018-05-25T00:00:00  -->
 <windDirection deg="82.6" code="E" name="East"/>
 <windSpeed mps="4.0" name="Gentle breeze"/>
 <temperature unit="celsius" value="18"/>
 <pressure unit="hPa" value="1018.9"/>
 </time>
 <time from="2018-05-25T06:00:00" to="2018-05-25T12:00:00" period="1">
-<!--
- Valid from 2018-05-25T06:00:00 to 2018-05-25T12:00:00 
--->
 <symbol number="3" numberEx="3" name="Partly cloudy" var="03d"/>
 <precipitation value="0"/>
-<!--  Valid at 2018-05-25T06:00:00  -->
 <windDirection deg="67.2" code="ENE" name="East-northeast"/>
 <windSpeed mps="1.9" name="Light breeze"/>
 <temperature unit="celsius" value="15"/>
 <pressure unit="hPa" value="1019.4"/>
 </time>
 <time from="2018-05-25T12:00:00" to="2018-05-25T18:00:00" period="2">
-<!--
- Valid from 2018-05-25T12:00:00 to 2018-05-25T18:00:00 
--->
 <symbol number="4" numberEx="4" name="Cloudy" var="04"/>
 <precipitation value="0"/>
-<!--  Valid at 2018-05-25T12:00:00  -->
 <windDirection deg="95.7" code="E" name="East"/>
 <windSpeed mps="4.5" name="Gentle breeze"/>
 <temperature unit="celsius" value="23"/>
 <pressure unit="hPa" value="1018.7"/>
 </time>
 <time from="2018-05-25T18:00:00" to="2018-05-26T00:00:00" period="3">
-<!--
- Valid from 2018-05-25T18:00:00 to 2018-05-26T00:00:00 
--->
 <symbol number="3" numberEx="3" name="Partly cloudy" var="03n"/>
 <precipitation value="0"/>
-<!--  Valid at 2018-05-25T18:00:00  -->
 <windDirection deg="81.0" code="E" name="East"/>
 <windSpeed mps="4.6" name="Gentle breeze"/>
 <temperature unit="celsius" value="23"/>
 <pressure unit="hPa" value="1017.7"/>
-</time>
-<time from="2018-05-26T00:00:00" to="2018-05-26T06:00:00" period="0">
-<!--
- Valid from 2018-05-26T00:00:00 to 2018-05-26T06:00:00 
--->
-<symbol number="1" numberEx="1" name="Clear sky" var="01n"/>
-<precipitation value="0"/>
-<!--  Valid at 2018-05-26T00:00:00  -->
-<windDirection deg="99.0" code="E" name="East"/>
-<windSpeed mps="2.0" name="Light breeze"/>
-<temperature unit="celsius" value="16"/>
-<pressure unit="hPa" value="1020.2"/>
-</time>
-<time from="2018-05-26T06:00:00" to="2018-05-26T12:00:00" period="1">
-<!--
- Valid from 2018-05-26T06:00:00 to 2018-05-26T12:00:00 
--->
-<symbol number="1" numberEx="1" name="Clear sky" var="01d"/>
-<precipitation value="0"/>
-<!--  Valid at 2018-05-26T06:00:00  -->
-<windDirection deg="18.3" code="NNE" name="North-northeast"/>
-<windSpeed mps="1.5" name="Light air"/>
-<temperature unit="celsius" value="13"/>
-<pressure unit="hPa" value="1020.7"/>
-</time>
-<time from="2018-05-26T12:00:00" to="2018-05-26T18:00:00" period="2">
-<!--
- Valid from 2018-05-26T12:00:00 to 2018-05-26T18:00:00 
--->
-<symbol number="2" numberEx="2" name="Fair" var="02d"/>
-<precipitation value="0"/>
-<!--  Valid at 2018-05-26T12:00:00  -->
-<windDirection deg="80.1" code="E" name="East"/>
-<windSpeed mps="1.7" name="Light breeze"/>
-<temperature unit="celsius" value="23"/>
-<pressure unit="hPa" value="1020.9"/>
 </time>
 </tabular>
 </forecast>
 </weatherdata>
 ```
 
-This example shows us several things. Although number can be treated as a numeric value in XML, it is always parsed as a string. The same holds for boolean values and null values. That's because XML does not support numeric data type (it can be interpreted as a numeric data type using XML Schema), everything is treated as a string. You can also see that attributes are converted to JSON objects, since JSON does not support attributes. You may notice that applying `xmlToJson` and `jsonToXml` functions in-order leads to different XML, since there's no binding between origin XML attribute - JSON objects are converted to XML elements. Applying `xmlToXml` function leads to the same XML document.
+Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.json`. We got following output.
+
+```
+{
+   "weatherdata": {
+      "location": {
+         "name": "Prague",
+         "type": "Capital",
+         "country": "Czech Republic",
+         "timezone": {
+            "_attributes": {
+               "id": "Europe/Prague",
+               "utcoffsetMinutes": "120"
+            }
+         },
+         "location": {
+            "_attributes": {
+               "altitude": "202",
+               "latitude": "50.08804",
+               "longitude": "14.42076",
+               "geobase": "geonames",
+               "geobaseid": "3067696"
+            }
+         }
+      },
+      "credits": "",
+      "links": {
+         "link": {
+            "_attributes": {
+               "id": "xmlSource",
+               "url": "http://www.yr.no/place/Czech_Republic/Prague/Prague/forecast.xml"
+            }
+         },
+         "link": {
+            "_attributes": {
+               "id": "xmlSourceHourByHour",
+               "url": "http://www.yr.no/place/Czech_Republic/Prague/Prague/forecast_hour_by_hour.xml"
+            }
+         },
+         "link": {
+            "_attributes": {
+               "id": "overview",
+               "url": "http://www.yr.no/place/Czech_Republic/Prague/Prague/"
+            }
+         },
+         "link": {
+            "_attributes": {
+               "id": "hourByHour",
+               "url": "http://www.yr.no/place/Czech_Republic/Prague/Prague/hour_by_hour"
+            }
+         },
+         "link": {
+            "_attributes": {
+               "id": "longTermForecast",
+               "url": "http://www.yr.no/place/Czech_Republic/Prague/Prague/long"
+            }
+         }
+      },
+      "meta": {
+         "lastupdate": "2018-05-24T09:36:00",
+         "nextupdate": "2018-05-24T22:00:00"
+      },
+      "sun": {
+         "_attributes": {
+            "rise": "2018-05-24T05:05:16",
+            "set": "2018-05-24T20:53:47"
+         }
+      },
+      "forecast": {
+         "tabular": {
+            "time": {
+               "_attributes": {
+                  "from": "2018-05-24T18:00:00",
+                  "to": "2018-05-25T00:00:00",
+                  "period": "3"
+               },
+               "symbol": {
+                  "_attributes": {
+                     "number": "4",
+                     "numberEx": "4",
+                     "name": "Cloudy",
+                     "var": "04"
+                  }
+               },
+               "precipitation": {
+                  "_attributes": {
+                     "value": "0"
+                  }
+               },
+               "windDirection": {
+                  "_attributes": {
+                     "deg": "86.1",
+                     "code": "E",
+                     "name": "East"
+                  }
+               },
+               "windSpeed": {
+                  "_attributes": {
+                     "mps": "5.6",
+                     "name": "Moderate breeze"
+                  }
+               },
+               "temperature": {
+                  "_attributes": {
+                     "unit": "celsius",
+                     "value": "23"
+                  }
+               },
+               "pressure": {
+                  "_attributes": {
+                     "unit": "hPa",
+                     "value": "1018.2"
+                  }
+               }
+            },
+            "time": {
+               "_attributes": {
+                  "from": "2018-05-25T00:00:00",
+                  "to": "2018-05-25T06:00:00",
+                  "period": "0"
+               },
+               "symbol": {
+                  "_attributes": {
+                     "number": "4",
+                     "numberEx": "4",
+                     "name": "Cloudy",
+                     "var": "04"
+                  }
+               },
+               "precipitation": {
+                  "_attributes": {
+                     "value": "0"
+                  }
+               },
+               "windDirection": {
+                  "_attributes": {
+                     "deg": "82.6",
+                     "code": "E",
+                     "name": "East"
+                  }
+               },
+               "windSpeed": {
+                  "_attributes": {
+                     "mps": "4.0",
+                     "name": "Gentle breeze"
+                  }
+               },
+               "temperature": {
+                  "_attributes": {
+                     "unit": "celsius",
+                     "value": "18"
+                  }
+               },
+               "pressure": {
+                  "_attributes": {
+                     "unit": "hPa",
+                     "value": "1018.9"
+                  }
+               }
+            },
+            "time": {
+               "_attributes": {
+                  "from": "2018-05-25T06:00:00",
+                  "to": "2018-05-25T12:00:00",
+                  "period": "1"
+               },
+               "symbol": {
+                  "_attributes": {
+                     "number": "3",
+                     "numberEx": "3",
+                     "name": "Partly cloudy",
+                     "var": "03d"
+                  }
+               },
+               "precipitation": {
+                  "_attributes": {
+                     "value": "0"
+                  }
+               },
+               "windDirection": {
+                  "_attributes": {
+                     "deg": "67.2",
+                     "code": "ENE",
+                     "name": "East-northeast"
+                  }
+               },
+               "windSpeed": {
+                  "_attributes": {
+                     "mps": "1.9",
+                     "name": "Light breeze"
+                  }
+               },
+               "temperature": {
+                  "_attributes": {
+                     "unit": "celsius",
+                     "value": "15"
+                  }
+               },
+               "pressure": {
+                  "_attributes": {
+                     "unit": "hPa",
+                     "value": "1019.4"
+                  }
+               }
+            },
+            "time": {
+               "_attributes": {
+                  "from": "2018-05-25T12:00:00",
+                  "to": "2018-05-25T18:00:00",
+                  "period": "2"
+               },
+               "symbol": {
+                  "_attributes": {
+                     "number": "4",
+                     "numberEx": "4",
+                     "name": "Cloudy",
+                     "var": "04"
+                  }
+               },
+               "precipitation": {
+                  "_attributes": {
+                     "value": "0"
+                  }
+               },
+               "windDirection": {
+                  "_attributes": {
+                     "deg": "95.7",
+                     "code": "E",
+                     "name": "East"
+                  }
+               },
+               "windSpeed": {
+                  "_attributes": {
+                     "mps": "4.5",
+                     "name": "Gentle breeze"
+                  }
+               },
+               "temperature": {
+                  "_attributes": {
+                     "unit": "celsius",
+                     "value": "23"
+                  }
+               },
+               "pressure": {
+                  "_attributes": {
+                     "unit": "hPa",
+                     "value": "1018.7"
+                  }
+               }
+            },
+            "time": {
+               "_attributes": {
+                  "from": "2018-05-25T18:00:00",
+                  "to": "2018-05-26T00:00:00",
+                  "period": "3"
+               },
+               "symbol": {
+                  "_attributes": {
+                     "number": "3",
+                     "numberEx": "3",
+                     "name": "Partly cloudy",
+                     "var": "03n"
+                  }
+               },
+               "precipitation": {
+                  "_attributes": {
+                     "value": "0"
+                  }
+               },
+               "windDirection": {
+                  "_attributes": {
+                     "deg": "81.0",
+                     "code": "E",
+                     "name": "East"
+                  }
+               },
+               "windSpeed": {
+                  "_attributes": {
+                     "mps": "4.6",
+                     "name": "Gentle breeze"
+                  }
+               },
+               "temperature": {
+                  "_attributes": {
+                     "unit": "celsius",
+                     "value": "23"
+                  }
+               },
+               "pressure": {
+                  "_attributes": {
+                     "unit": "hPa",
+                     "value": "1017.7"
+                  }
+               }
+            }
+         }
+      }
+   }
+}
+```
+
+This example shows us several things. Although number can be treated as a numeric value in XML, it is always parsed as a string. The same holds for boolean values and null values. That's because XML does not support numeric data type (it can be interpreted as a numeric data type using XML Schema), everything is treated as a string. You can also see that attributes are converted to JSON objects, since JSON does not support attributes. You may notice that applying `xmlToJson` and `jsonToXml` functions in-order leads to different XML, since there's no binding between origin XML attribute - JSON objects are converted to XML elements. Applying `xmlToXml` function leads to the same XML document. Empty tag was manually added just to demonstrate that the parser can handle empty tags, too.
+
+The only think both parsers cannot handle is parsing comments. You also cannot use mixed elements (text along with sublements), because it would violate JSON concept. The XML document to be parsed must not start with XML prolog, otherwise it would not parse. These minor bugs are intended to be a future work.
