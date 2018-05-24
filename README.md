@@ -22,8 +22,443 @@ The code is logically distributed into three modules.
 3. *Conversions* module. This module combines previously mentioned modules, contains conversion functions.
 
 # Examples 
+### JSON to JSON and XML example
  Suppose following, very poorly formatted and without any indentation, JSON document, saved as "data.json" file. It was downloaded from [Transit Feed API](https://api.transitfeeds.com/v1), shortened a little bit and it represents "all" the locations that are transit feeds available for. 
 
- > {"status":"OK","ts":1527170641,"results":{"locations":[{"id":606,"pid":168,"t":"Aachen, Germany","n":"Aachen","lat":50.775346,"lng":6.083887},{"id":416,"pid":415,"t":"Addison County, VT, USA","n":"Addison County","lat":44.119729,"lng":-73.164338},{"id":4,"pid":3,"t":"Adelaide SA, Australia","n":"Adelaide","lat":-34.928621,"lng":138.599959},{"id":99,"pid":0,"t":"Africa","n":"Africa","lat":-8.783195,"lng":34.508523},{"id":11,"pid":9,"t":"Airlie Beach QLD 4802, Australia","n":"Airlie Beach","lat":-20.26872,"lng":148.718456},{"id":237,"pid":31,"t":"Alabama, USA","n":"Alabama","lat":32.318231,"lng":-86.902298},{"id":276,"pid":31,"t":"Alaska, USA","n":"Alaska","lat":64.200841,"lng":-149.493673},{"id":85,"pid":84,"t":"Albany, NY, USA","n":"Albany","lat":42.652579,"lng":-73.756232},{"id":328,"pid":63,"t":"Albany, OR, USA","n":"Albany","lat":44.636511,"lng":-123.105928},{"id":42,"pid":32,"t":"Alberta, Canada","n":"Alberta","lat":53.933271,"lng":-116.576504},{"id":81,"pid":80,"t":"Albuquerque, NM, USA","n":"Albuquerque","lat":35.110703,"lng":-106.609991},{"id":324,"pid":138,"t":"Alexandria, VA, USA","n":"Alexandria","lat":38.804836,"lng":-77.046921},{"id":375,"pid":373,"t":"Alice Springs NT 0870, Australia","n":"Alice Springs","lat":-23.70021,"lng":133.880611},{"id":134,"pid":133,"t":"Allegany, MD, USA","n":"Allegany","lat":39.625525,"lng":-78.6115},{"id":459,"pid":105,"t":"Allentown, PA, USA","n":"Allentown","lat":40.60843,"lng":-75.490183}]}}    
+```
+ {"status":"OK","ts":1527170641,"results":{"locations":[{"id":606,"pid":168,"t":"Aachen, Germany","n":"Aachen","lat":"50.775346","lng":"6.083887"},{"id":416,"pid":415,"t":"Addison County, VT, USA","n":"Addison County","lat":"44.119729","lng":"-73.164338"},{"id":4,"pid":3,"t":"Adelaide SA, Australia","n":"Adelaide","lat":"-34.928621","lng":"138.599959"},{"id":99,"pid":0,"t":"Africa","n":"Africa","lat":"-8.783195","lng":"34.508523"},{"id":11,"pid":9,"t":"Airlie Beach QLD 4802, Australia","n":"Airlie Beach","lat":"-20.26872","lng":"148.718456"},{"id":237,"pid":31,"t":"Alabama, USA","n":"Alabama","lat":"32.318231","lng":"-86.902298"},{"id":276,"pid":31,"t":"Alaska, USA","n":"Alaska","lat":"64.200841","lng":"-149.493673"},{"id":85,"pid":84,"t":"Albany, NY, USA","n":"Albany","lat":"42.652579","lng":"-73.756232"},{"id":328,"pid":63,"t":"Albany, OR, USA","n":"Albany","lat":"44.636511","lng":"-123.105928"},{"id":42,"pid":32,"t":"Alberta, Canada","n":"Alberta","lat":"53.933271","lng":"-116.576504"},{"id":81,"pid":80,"t":"Albuquerque, NM, USA","n":"Albuquerque","lat":"35.110703","lng":"-106.609991"},{"id":324,"pid":138,"t":"Alexandria, VA, USA","n":"Alexandria","lat":"38.804836","lng":"-77.046921"},{"id":375,"pid":373,"t":"Alice Springs NT 0870, Australia","n":"Alice Springs","lat":"-23.70021","lng":"133.880611"},{"id":134,"pid":133,"t":"Allegany, MD, USA","n":"Allegany","lat":"39.625525","lng":"-78.6115"},{"id":459,"pid":105,"t":"Allentown, PA, USA","n":"Allentown","lat":"40.60843","lng":"-75.490183"}]}}
+ ```
 
  Using `jsonToJson "data.json" 3`, it can be converted to "new_data.json" file where one tab holds for three spaces. The output is following.                    
+
+```
+{
+   "status": "OK",
+   "ts": 1527170641,
+   "results": {
+      "locations": [ {
+         "id": 606,
+         "pid": 168,
+         "t": "Aachen, Germany",
+         "n": "Aachen",
+         "lat": "50.775346",
+         "lng": "6.083887"
+      }, {
+         "id": 416,
+         "pid": 415,
+         "t": "Addison County, VT, USA",
+         "n": "Addison County",
+         "lat": "44.119729",
+         "lng": "-73.164338"
+      }, {
+         "id": 4,
+         "pid": 3,
+         "t": "Adelaide SA, Australia",
+         "n": "Adelaide",
+         "lat": "-34.928621",
+         "lng": "138.599959"
+      }, {
+         "id": 99,
+         "pid": 0,
+         "t": "Africa",
+         "n": "Africa",
+         "lat": "-8.783195",
+         "lng": "34.508523"
+      }, {
+         "id": 11,
+         "pid": 9,
+         "t": "Airlie Beach QLD 4802, Australia",
+         "n": "Airlie Beach",
+         "lat": "-20.26872",
+         "lng": "148.718456"
+      }, {
+         "id": 237,
+         "pid": 31,
+         "t": "Alabama, USA",
+         "n": "Alabama",
+         "lat": "32.318231",
+         "lng": "-86.902298"
+      }, {
+         "id": 276,
+         "pid": 31,
+         "t": "Alaska, USA",
+         "n": "Alaska",
+         "lat": "64.200841",
+         "lng": "-149.493673"
+      }, {
+         "id": 85,
+         "pid": 84,
+         "t": "Albany, NY, USA",
+         "n": "Albany",
+         "lat": "42.652579",
+         "lng": "-73.756232"
+      }, {
+         "id": 328,
+         "pid": 63,
+         "t": "Albany, OR, USA",
+         "n": "Albany",
+         "lat": "44.636511",
+         "lng": "-123.105928"
+      }, {
+         "id": 42,
+         "pid": 32,
+         "t": "Alberta, Canada",
+         "n": "Alberta",
+         "lat": "53.933271",
+         "lng": "-116.576504"
+      }, {
+         "id": 81,
+         "pid": 80,
+         "t": "Albuquerque, NM, USA",
+         "n": "Albuquerque",
+         "lat": "35.110703",
+         "lng": "-106.609991"
+      }, {
+         "id": 324,
+         "pid": 138,
+         "t": "Alexandria, VA, USA",
+         "n": "Alexandria",
+         "lat": "38.804836",
+         "lng": "-77.046921"
+      }, {
+         "id": 375,
+         "pid": 373,
+         "t": "Alice Springs NT 0870, Australia",
+         "n": "Alice Springs",
+         "lat": "-23.70021",
+         "lng": "133.880611"
+      }, {
+         "id": 134,
+         "pid": 133,
+         "t": "Allegany, MD, USA",
+         "n": "Allegany",
+         "lat": "39.625525",
+         "lng": "-78.6115"
+      }, {
+         "id": 459,
+         "pid": 105,
+         "t": "Allentown, PA, USA",
+         "n": "Allentown",
+         "lat": "40.60843",
+         "lng": "-75.490183"
+      } ]
+   }
+}
+```
+
+As you can see, it's nicely indented. You can get XML result as well, using `jsonToXml "data.json" 3`.
+
+```
+<status>
+   OK
+</status>
+<ts>
+   1527170641
+</ts>
+<results>
+   <locations>
+      <item>
+         <id>
+            606
+         </id>
+         <pid>
+            168
+         </pid>
+         <t>
+            Aachen, Germany
+         </t>
+         <n>
+            Aachen
+         </n>
+         <lat>
+            50.775346
+         </lat>
+         <lng>
+            6.083887
+         </lng>
+      </item>
+      <item>
+         <id>
+            416
+         </id>
+         <pid>
+            415
+         </pid>
+         <t>
+            Addison County, VT, USA
+         </t>
+         <n>
+            Addison County
+         </n>
+         <lat>
+            44.119729
+         </lat>
+         <lng>
+            -73.164338
+         </lng>
+      </item>
+      <item>
+         <id>
+            4
+         </id>
+         <pid>
+            3
+         </pid>
+         <t>
+            Adelaide SA, Australia
+         </t>
+         <n>
+            Adelaide
+         </n>
+         <lat>
+            -34.928621
+         </lat>
+         <lng>
+            138.599959
+         </lng>
+      </item>
+      <item>
+         <id>
+            99
+         </id>
+         <pid>
+            0
+         </pid>
+         <t>
+            Africa
+         </t>
+         <n>
+            Africa
+         </n>
+         <lat>
+            -8.783195
+         </lat>
+         <lng>
+            34.508523
+         </lng>
+      </item>
+      <item>
+         <id>
+            11
+         </id>
+         <pid>
+            9
+         </pid>
+         <t>
+            Airlie Beach QLD 4802, Australia
+         </t>
+         <n>
+            Airlie Beach
+         </n>
+         <lat>
+            -20.26872
+         </lat>
+         <lng>
+            148.718456
+         </lng>
+      </item>
+      <item>
+         <id>
+            237
+         </id>
+         <pid>
+            31
+         </pid>
+         <t>
+            Alabama, USA
+         </t>
+         <n>
+            Alabama
+         </n>
+         <lat>
+            32.318231
+         </lat>
+         <lng>
+            -86.902298
+         </lng>
+      </item>
+      <item>
+         <id>
+            276
+         </id>
+         <pid>
+            31
+         </pid>
+         <t>
+            Alaska, USA
+         </t>
+         <n>
+            Alaska
+         </n>
+         <lat>
+            64.200841
+         </lat>
+         <lng>
+            -149.493673
+         </lng>
+      </item>
+      <item>
+         <id>
+            85
+         </id>
+         <pid>
+            84
+         </pid>
+         <t>
+            Albany, NY, USA
+         </t>
+         <n>
+            Albany
+         </n>
+         <lat>
+            42.652579
+         </lat>
+         <lng>
+            -73.756232
+         </lng>
+      </item>
+      <item>
+         <id>
+            328
+         </id>
+         <pid>
+            63
+         </pid>
+         <t>
+            Albany, OR, USA
+         </t>
+         <n>
+            Albany
+         </n>
+         <lat>
+            44.636511
+         </lat>
+         <lng>
+            -123.105928
+         </lng>
+      </item>
+      <item>
+         <id>
+            42
+         </id>
+         <pid>
+            32
+         </pid>
+         <t>
+            Alberta, Canada
+         </t>
+         <n>
+            Alberta
+         </n>
+         <lat>
+            53.933271
+         </lat>
+         <lng>
+            -116.576504
+         </lng>
+      </item>
+      <item>
+         <id>
+            81
+         </id>
+         <pid>
+            80
+         </pid>
+         <t>
+            Albuquerque, NM, USA
+         </t>
+         <n>
+            Albuquerque
+         </n>
+         <lat>
+            35.110703
+         </lat>
+         <lng>
+            -106.609991
+         </lng>
+      </item>
+      <item>
+         <id>
+            324
+         </id>
+         <pid>
+            138
+         </pid>
+         <t>
+            Alexandria, VA, USA
+         </t>
+         <n>
+            Alexandria
+         </n>
+         <lat>
+            38.804836
+         </lat>
+         <lng>
+            -77.046921
+         </lng>
+      </item>
+      <item>
+         <id>
+            375
+         </id>
+         <pid>
+            373
+         </pid>
+         <t>
+            Alice Springs NT 0870, Australia
+         </t>
+         <n>
+            Alice Springs
+         </n>
+         <lat>
+            -23.70021
+         </lat>
+         <lng>
+            133.880611
+         </lng>
+      </item>
+      <item>
+         <id>
+            134
+         </id>
+         <pid>
+            133
+         </pid>
+         <t>
+            Allegany, MD, USA
+         </t>
+         <n>
+            Allegany
+         </n>
+         <lat>
+            39.625525
+         </lat>
+         <lng>
+            -78.6115
+         </lng>
+      </item>
+      <item>
+         <id>
+            459
+         </id>
+         <pid>
+            105
+         </pid>
+         <t>
+            Allentown, PA, USA
+         </t>
+         <n>
+            Allentown
+         </n>
+         <lat>
+            40.60843
+         </lat>
+         <lng>
+            -75.490183
+         </lng>
+      </item>
+   </locations>
+</results>
+```
+
+In this case, the XML contains no root element. Meaning that the XML is not well-formed. There is nothing to do with this, since JSON document contains no root element as well. In this case, the result was saved in "data.xml" file.

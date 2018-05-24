@@ -155,7 +155,11 @@ printJson x numberOfSpaces = printJsonImpl x 0 where
 
   printJsonImpl (NullValue ()) indent = (printIndent indent) ++ "null"
 
-  printJsonImpl (NodesArray x) indent = let
+  printJsonImpl (NodesArray x) indent = let    
+                                          -- indentation for objects only   
+                                          printImpl ((NodeSubelement x):[]) = printJsonImpl (NodeSubelement x) (indent + 2)
+                                          printImpl ((NodeSubelement x):xs) = (printJsonImpl (NodeSubelement x) (indent + 2)) ++ ", " ++ (printImpl xs)
+                                          
                                           printImpl (x:[]) = printJsonImpl x 0
                                           printImpl (x:xs) = (printJsonImpl x 0) ++ ", " ++ (printImpl xs)
                                         in
