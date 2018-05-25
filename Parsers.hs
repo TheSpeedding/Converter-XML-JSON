@@ -28,11 +28,8 @@ module Parsers where
 
     parseJsonObject = NodeSubelements <$> pBracesIgnore (pCommaDelimited objItem) where 
                         objItem = do 
-                                    pWhiteSpace
-                                    TextContent key <- parseJsonString
-                                    pWhiteSpace
-                                    pChar ':'
-                                    pWhiteSpace
+                                    TextContent key <- pToken parseJsonString
+                                    pToken $ pChar ':'
                                     ((,,) key []) <$> parseJson
 
 
@@ -47,30 +44,22 @@ module Parsers where
     parseXmlAttrOrElName = pMany1 $ pOneOf (['0'..'9'] ++ ['a'..'z'] ++ ['A'..'Z'])
 
     parseXmlAttribute = do
-                            pWhiteSpace
-                            key <- parseXmlAttrOrElName
-                            pWhiteSpace
-                            pStr "=\""
-                            pWhiteSpace
-                            TextContent val <- parseXmlInnerContent
-                            pChar '\"'
+                            key <- pToken parseXmlAttrOrElName
+                            pToken $ pStr "=\""
+                            TextContent val <- pToken $ parseXmlInnerContent
+                            pToken $ pChar '\"'
                             return (key, val)
 
     parseXmlElement = NodeSubelements <$> (pMany1 element) where 
                         element = do
-                                    pWhiteSpace
-                                    pChar '<'
+                                    pToken $ pChar '<'
                                     name <- parseXmlAttrOrElName
-                                    attr <- pMany parseXmlAttribute
+                                    attr <- pToken $ pMany parseXmlAttribute
                                     close <- (pStr "/>" <|> pStr ">")
-                                    pWhiteSpace
                                     if (length close) == 2 then return (name, attr, Empty) -- empty element
                                     else do 
-                                            pWhiteSpace
-                                            body <- parseXml -- content of the element
-                                            pWhiteSpace
-                                            pStr "</"
+                                            body <- pToken parseXml -- content of the element
+                                            pToken $ pStr "</"
                                             pStr name
                                             pStr ">"
-                                            pWhiteSpace
                                             return (name, attr, body)
