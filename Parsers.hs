@@ -8,17 +8,18 @@ module Parsers where
     type Element = (String, [Attribute], Node) -- in json, attributes are empty list
 
     data Node = NumericContent Int | TextContent String | NodesArray [Node] | BoolContent Bool | NullValue () | NodeSubelements [Element] | Empty
+    
+    isEmpty Empty = True
+    isEmpty _ = False
 
+    getElems (NodeSubelements x) = x
 
     parseJson :: Parser Node
     parseJson = parseJsonNumber <|> parseJsonString <|> parseJsonArray <|> parseJsonBool <|> parseJsonNull <|> parseJsonObject where
+
     parseJsonNumber = NumericContent . (read :: String -> Int) <$> pMany1 (pOneOf ['0'..'9'])
     
-    parseJsonString = let 
-                        innerChar = pOneOf " !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
-                        innerString = pMany innerChar
-                        in
-                        TextContent <$> pDelim "\"" "\"" innerString
+    parseJsonString = TextContent <$> pDelim "\"" "\"" (pMany $ pOneOf " !#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~")
     
     parseJsonArray = NodesArray <$> pBracketsIgnore (pCommaDelimited parseJson)
 
@@ -35,11 +36,8 @@ module Parsers where
 
     parseXml :: Parser Node
     parseXml = parseXmlElement <|> parseXmlInnerContent where
-    parseXmlInnerContent = let 
-                                innerChar = pOneOf " !#$%&'()*+,-_./0123456789:;?@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
-                                innerString = pMany innerChar
-                            in
-                                TextContent <$> innerString
+
+    parseXmlInnerContent = TextContent <$> (pMany $ pOneOf " !#$%&'()*+,-_./0123456789:;?@ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz")
 
     parseXmlAttrOrElName = pMany1 $ pOneOf (['0'..'9'] ++ ['a'..'z'] ++ ['A'..'Z'])
 
