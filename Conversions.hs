@@ -17,7 +17,7 @@ module Conversions where
                                             contents <- readFile inputFile
                                             let parsed = doParseEof parseJson contents
                                             if isNothing parsed then error ("Problem with parsing.")
-                                            else do writeFile newFileName (printJson (fromJust parsed) indent)
+                                            else do writeFile newFileName (printJson (fromJust parsed))
 
 
     jsonToXml :: FilePath -> Int -> IO ()
@@ -31,7 +31,7 @@ module Conversions where
                                             contents <- readFile inputFile
                                             let parsed = doParseEof parseJson contents
                                             if isNothing parsed then error ("Problem with parsing.")
-                                            else writeFile newFileName (printXml (fromJust parsed) indent)
+                                            else writeFile newFileName (printXml (fromJust parsed))
 
 
     xmlToXml :: FilePath -> Int -> IO () -- might be useful when reformatting (indentation, unreadable xml to readable one)
@@ -45,7 +45,7 @@ module Conversions where
                                             contents <- readFile inputFile
                                             let parsed = doParseEof parseXml contents
                                             if isNothing parsed then error ("Problem with parsing.")
-                                            else writeFile newFileName (printXml (fromJust parsed) indent)
+                                            else writeFile newFileName (printXml (fromJust parsed))
 
 
     xmlToJson :: FilePath -> Int -> IO ()
@@ -59,4 +59,4 @@ module Conversions where
                                             contents <- readFile inputFile
                                             let parsed = doParseEof parseXml contents
                                             if isNothing parsed then error ("Problem with parsing.")
-                                            else writeFile newFileName (printJson (fromJust parsed) indent)
+                                            else writeFile newFileName (printJson (fromJust parsed))

@@ -132,3 +132,5 @@ module PidiParsec where
   pCommaDelimited = pSep (pChar ',')
 
   pWSDelimited = pSep pWhiteSpace
+
+  pToken t = pWhiteSpace >> t
