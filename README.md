@@ -14,8 +14,8 @@ Functions `xmlToJson` and `xmlToXml` have the same semantics, as you may expect.
 
 # Code division
 The code is logically divided into three modules.
-1. *Parsers* module. This module contains everything necessary for parsing XML, JSON and CSV files.
-2. *Printers* module. This module contains everytthing necessary for pritnting XML and JSON.
+1. *Parsers* module. This module contains everything necessary for parsing XML and JSON files.
+2. *Printers* module. This module contains everytthing necessary for printing XML and JSON.
 3. *Conversions* module. This module combines previously mentioned modules, contains conversion functions.
 
 # Examples 
@@ -458,7 +458,7 @@ As you can see, it's nicely indented. You can get XML result as well, using `jso
 </results>
 ```
 
-In this case, the XML contains no root element. Meaning that the XML is not well-formed. There is nothing to do with this, since well-formed JSON document can contain no root element as well. In this case, the result was saved in `data.xml` file.
+In this case, the XML contains no root element. Meaning that the XML is not well-formed. There is nothing to do with this, since well-formed JSON document can contain no root element as well. The result was saved in `data.xml` file. As you can see, JSON array items were printed in XML like subelements of the array element. That means, reverse function does not necessarily have to lead to the same JSON file.
 
 ### XML to JSON example
 As an example, we can use (shortened) weather forecast data for Prague, downloaded freely from [yr.no](https://yr.no/) portal.
@@ -835,4 +835,4 @@ Let's execute command `xmlToJson "data.xml" 3`, new file is awaited to be `data.
 
 This example shows us several things. Although number can be treated as a numeric value in XML, it is always parsed as a string. The same holds for boolean values and null values. That's because XML does not support numeric data type (it can be interpreted as a numeric data type using XML Schema), everything is treated as a string. You can also see that attributes are converted to JSON objects, since JSON does not support attributes. You may notice that applying `xmlToJson` and `jsonToXml` functions in-order leads to different XML, since there's no binding between origin XML attribute - JSON objects are converted to XML elements. You can get symmetric function after two iterations, when you convert JSON with translated attributes into the XML document... Anyway, applying `xmlToXml` function leads to the same XML document. Empty tag was manually added just to demonstrate that the parser can handle empty tags, too.
 
-The only think both parsers cannot handle is parsing comments. You also cannot use mixed elements (text along with sublements), because it would violate JSON concept. The XML document to be parsed must not start with XML header, otherwise it would not parse. These minor bugs are intended to be a future work. It's also planned to implement parsing of JSON "attributes" to the real XML attributes.
+The only thing both parsers cannot handle is parsing comments. You also cannot use mixed elements (text along with sublements), because it would violate JSON concept. The XML document to be parsed must not start with XML header, otherwise it would not parse. These minor bugs are intended to be a future work. It's also planned to implement parsing of JSON "attributes" to the real XML attributes.
