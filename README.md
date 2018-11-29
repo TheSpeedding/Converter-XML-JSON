@@ -1,4 +1,4 @@
-# XML/JSON Converter
+# XML-JSON
 Application written in Haskell offering conversions between XML and JSON formatted files.
 
 It can parse both XML and JSON files. For this purpose, it uses PidiParsec library (lightweight version of Parsec) and internal data representation in abstract (not showable) format. Using this format, conversion functions can produce JSON and XML formatted files.
